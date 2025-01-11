@@ -1,3 +1,9 @@
+!pip streamlit==1.26.0
+!pip pandas==1.5.3
+!pip matplotlib==3.7.1
+!pip scikit-learn==1.3.0
+!pip numpy==1.23.5
+
 import streamlit as st
 import pandas as pd
 from sklearn.cluster import KMeans
