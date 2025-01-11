@@ -13,7 +13,7 @@ st.title("Deprem Analiz ve Clustering Uygulaması")
 st.sidebar.header("Parametreler")
 
 # Veri yükleme
-uploaded_file = "data/earthquake_data.csv"
+uploaded_file = "filtered.csv"
 
 if uploaded_file:
     # Veriyi oku
