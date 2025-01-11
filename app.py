@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
 # Streamlit sayfa ayarları
-uploaded_file = "data/earthquake_data.csv"
+st.set_page_config(page_title="Deprem Analiz ve Clustering Uygulaması", layout="wide")
 
 # Başlık ve Açıklama
 st.title("Deprem Analiz ve Clustering Uygulaması")
 st.sidebar.header("Parametreler")
 
 # Veri yükleme
-uploaded_file = st.sidebar.file_uploader("Deprem Verilerini Yükle (CSV)", type=["csv"])
+uploaded_file = "data/earthquake_data.csv"
 
 if uploaded_file:
     # Veriyi oku
