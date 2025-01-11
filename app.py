@@ -1,8 +1,8 @@
-!pip streamlit==1.26.0
-!pip pandas==1.5.3
-!pip matplotlib==3.7.1
-!pip scikit-learn==1.3.0
-!pip numpy==1.23.5
+!pip install streamlit==1.26.0
+!pip install pandas==1.5.3
+!pip install matplotlib==3.7.1
+!pip install scikit-learn==1.3.0
+!pip install numpy==1.23.5
 
 import streamlit as st
 import pandas as pd
