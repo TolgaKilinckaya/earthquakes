@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
 # Streamlit sayfa ayarları
-st.set_page_config(page_title="Deprem Analiz ve Clustering Uygulaması", layout="wide")
+uploaded_file = "data/earthquake_data.csv"
 
 # Başlık ve Açıklama
 st.title("Deprem Analiz ve Clustering Uygulaması")
