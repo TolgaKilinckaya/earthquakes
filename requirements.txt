@@ -4,3 +4,7 @@ matplotlib
 scikit-learn
 numpy
 basemap
+requests
+folium
+branca
+streamlit_folium
