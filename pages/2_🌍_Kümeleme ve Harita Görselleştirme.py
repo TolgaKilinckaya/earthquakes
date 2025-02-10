@@ -68,3 +68,45 @@ if uploaded_file:
     st.subheader("Küme İstatistikleri")
     st.table(cluster_stats)
 
+    # Derinlik sütununun kontrolü
+    if 'Depth' not in data.columns or 'Magnitude' not in data.columns:
+        st.error("The dataset must contain 'Depth' and 'Magnitude' columns.")
+    else:
+        # Derinlik ve büyüklüğe göre clustering için veriyi hazırlayın
+        clustering_data_depth = data[['Depth']].dropna()
+
+        # Veriyi normalize edin
+        scaler = StandardScaler()
+        clustering_data_normalized = scaler.fit_transform(clustering_data_depth)
+
+        # K-Means uygulayın
+        kmeans_depth = KMeans(n_clusters=k, random_state=42, n_init=10)
+        data['Cluster'] = kmeans_depth.fit_predict(clustering_data_normalized)
+
+        # Sonuçları görselleştirme
+        st.subheader("Derinliğe Göre Kümeleme")
+        fig, ax = plt.subplots(figsize=(9, 6))
+        for cluster in range(k):
+            cluster_data = data[data['Cluster'] == cluster]
+            ax.scatter(cluster_data['Magnitude'], cluster_data['Depth'], label=f'Cluster {cluster}', alpha=0.6)
+
+        ax.invert_yaxis()  # Derinlik görselde ters gösterilir (yüzeye yakın olan üstte)
+        ax.set_xlabel('Büyüklük')
+        ax.set_ylabel('Derinlik (km)')
+        ax.set_title('K-Means Kümeleme: Derinlik vs. Büyüklük')
+        ax.legend()
+        ax.grid()
+
+        # Görseli Streamlit'te göster
+        st.pyplot(fig)
+
+         # Her küme için ortalama değerleri hesaplayın
+        cluster_stats_depth = data.groupby('Cluster').agg(
+            Average_Depth=('Depth', 'mean'),
+            Average_Magnitude=('Magnitude', 'mean'),
+            Earthquake_Count=('Magnitude', 'count')
+        ).reset_index()
+
+        # Küme istatistiklerini göster
+        st.subheader("Küme İstatistikleri (Derinlik)")
+        st.write(cluster_stats_depth)
