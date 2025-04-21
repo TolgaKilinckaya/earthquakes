@@ -8,3 +8,4 @@ requests
 folium
 branca
 streamlit_folium
+obspy
