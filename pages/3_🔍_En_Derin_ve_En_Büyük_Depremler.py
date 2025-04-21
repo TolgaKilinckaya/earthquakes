@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
+import folium
+from streamlit_folium import st_folium
 
 st.set_page_config(page_title="En Derin ve Büyük Depremler", page_icon="🔍", layout="wide")
-
 st.title("En Derin ve Büyük Depremler")
-uploaded_file = "filtered.csv"
+
+uploaded_file = "deprem_verileri.csv"
 
 if uploaded_file:
     data = pd.read_csv(uploaded_file)
@@ -18,32 +18,48 @@ if uploaded_file:
     en_buyukler = data.nlargest(n, 'Magnitude')
     ortak_depremler = pd.merge(en_derinler, en_buyukler, how='inner')
 
-    # Harita çizimi
-    st.subheader("Deprem Haritası")
-    fig, ax = plt.subplots(figsize=(12, 8))
-    m = Basemap(projection='merc', llcrnrlat=data['Latitude'].min() - 0.25, urcrnrlat=data['Latitude'].max() + 0.25,
-        llcrnrlon=data['Longitude'].min() - 0.25, urcrnrlon=data['Longitude'].max() + 0.25, resolution='i', ax=ax)
-    m.drawcoastlines()
-    m.drawcountries()
-    m.fillcontinents(color='lightgray', lake_color='aqua')
-    m.drawmapboundary(fill_color='aqua')
+    # Harita oluştur
+    st.subheader("İnteraktif Deprem Haritası")
+    m = folium.Map(location=[data['Latitude'].mean(), data['Longitude'].mean()], zoom_start=6)
 
-    # En derin depremleri kırmızı göster
-    x, y = m(en_derinler['Longitude'].values, en_derinler['Latitude'].values)
-    m.scatter(x, y, s=en_derinler['Depth'], c='red', alpha=0.6, label='En Derin Depremler')
+    # En derin depremler (kırmızı)
+    for _, row in en_derinler.iterrows():
+        folium.CircleMarker(
+            location=[row['Latitude'], row['Longitude']],
+            radius=5,
+            color='red',
+            fill=True,
+            fill_opacity=0.6,
+            popup=f"Derin Deprem:<br><b>Tarih:</b> {row['Date']}<br><b>Derinlik:</b> {row['Depth']} km<br><b>Yer:</b> {row.get('Yer', 'N/A')}"
+        ).add_to(m)
 
-    # En büyük depremleri mavi göster
-    x, y = m(en_buyukler['Longitude'].values, en_buyukler['Latitude'].values)
-    m.scatter(x, y, s=en_buyukler['Magnitude'] * 10, c='blue', alpha=0.6, label='En Büyük Depremler')
+    # En büyük depremler (mavi)
+    for _, row in en_buyukler.iterrows():
+        folium.CircleMarker(
+            location=[row['Latitude'], row['Longitude']],
+            radius=row['Magnitude'],
+            color='blue',
+            fill=True,
+            fill_opacity=0.6,
+            popup=f"Büyük Deprem:<br><b>Tarih:</b> {row['Date']}<br><b>Şiddet:</b> {row['Magnitude']}<br><b>Yer:</b> {row.get('Yer', 'N/A')}"
+        ).add_to(m)
 
-    # Ortak olanları yeşil göster
-    x, y = m(ortak_depremler['Longitude'].values, ortak_depremler['Latitude'].values)
-    m.scatter(x, y, s=ortak_depremler['Magnitude'] * 10, c='green', alpha=0.8, label='Ortak Depremler')
+    # Ortak depremler (yeşil)
+    for _, row in ortak_depremler.iterrows():
+        folium.CircleMarker(
+            location=[row['Latitude'], row['Longitude']],
+            radius=row['Magnitude'] + 2,
+            color='green',
+            fill=True,
+            fill_opacity=0.8,
+            popup=f"Ortak Deprem:<br><b>Tarih:</b> {row['Date']}<br><b>Derinlik:</b> {row['Depth']} km<br><b>Şiddet:</b> {row['Magnitude']}<br><b>Yer:</b> {row.get('Yer', 'N/A')}"
+        ).add_to(m)
 
-    # Lejand ve başlık
-    plt.title("En Derin ve En Büyük Depremlerin Haritası", fontsize=14)
-    plt.legend(loc='lower left')
-    st.pyplot(fig)
+    # Ekstra: Sınır çizgisi ekle
+    bounds = [[36.00, 22.50], [36.00, 30.50], [41.20, 30.50], [41.20, 22.50], [36.00, 22.50]]
+    folium.PolyLine(bounds, color="black", weight=2.5, opacity=1).add_to(m)
+
+    st_folium(m, width=1000, height=600)
 
     # Ek veriler
     st.subheader("İstatistiksel Bilgiler")

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Grafikler", page_icon="📊", layout="wide")
 
 st.title("Zaman Serisi Analizi")
-uploaded_file = "filtered.csv"
+uploaded_file = "deprem_verileri.csv"
 
 if uploaded_file:
     data = pd.read_csv(uploaded_file)
