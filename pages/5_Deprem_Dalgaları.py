@@ -9,14 +9,14 @@ import folium
 from streamlit_folium import st_folium
 
 st.set_page_config(page_title="Deprem Dalgaları", page_icon="🌌", layout="wide")
-st.title("Dalga Formu Verisi 🌌")
+st.title("KOERI'den Dalga Formu Verisi 🌌")
 
-client = Client()
+client = Client("KOERI")
 
-# İstasyonları çek (genişletilmiş alan ve tüm networkler)
+# İstasyonları çek
 with st.spinner("İstasyonlar yükleniyor..."):
     try:
-        inventory = client.get_stations(network="*", station="*", minlatitude=36.0, maxlatitude=41.2,
+        inventory = client.get_stations(network="*", station="*", minlatitude=36, maxlatitude=41.2,
                                         minlongitude=22.5, maxlongitude=30.5, level="station")
         stations = []
         for net in inventory:
@@ -31,13 +31,13 @@ with st.spinner("İstasyonlar yükleniyor..."):
                 })
         stations_df = pd.DataFrame(stations)
 
-        st.subheader("İstasyonlar (36°-41.2°, 22.5°-30.5°)")
+        st.subheader("İstanbul Civarındaki İstasyonlar (40.5°-41.5°, 28°-30.5°)")
         st.dataframe(stations_df)
 
         # Harita göster
         st.subheader("İstasyonların Harita Üzerinde Gösterimi")
         map_center = [stations_df["Latitude"].mean(), stations_df["Longitude"].mean()]
-        fmap = folium.Map(location=map_center, zoom_start=6)
+        fmap = folium.Map(location=map_center, zoom_start=8)
         for _, row in stations_df.iterrows():
             folium.Marker(
                 location=[row['Latitude'], row['Longitude']],
