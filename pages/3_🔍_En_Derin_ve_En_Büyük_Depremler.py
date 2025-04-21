@@ -30,7 +30,7 @@ if uploaded_file:
             color='red',
             fill=True,
             fill_opacity=0.6,
-            popup=f"Derin Deprem:<br><b>Tarih:</b> {row['Date']}<br><b>Derinlik:</b> {row['Depth']} km<br><b>Yer:</b> {row.get('Yer', 'N/A')}"
+            popup=f"Derin Deprem:<br><b>Tarih:</b> {row['Date']}<br><b>Derinlik:</b> {row['Depth']} km<br><b>Büyüklük:</b> {row['Magnitude']}<br><b>Yer:</b> {row.get('Yer', 'N/A')}"
         ).add_to(m)
 
     # En büyük depremler (mavi)
@@ -41,7 +41,7 @@ if uploaded_file:
             color='blue',
             fill=True,
             fill_opacity=0.6,
-            popup=f"Büyük Deprem:<br><b>Tarih:</b> {row['Date']}<br><b>Şiddet:</b> {row['Magnitude']}<br><b>Yer:</b> {row.get('Yer', 'N/A')}"
+            popup=f"Büyük Deprem:<br><b>Tarih:</b> {row['Date']}<br><b>Büyüklük:</b> {row['Magnitude']}<br><b>Derinlik:</b> {row['Depth']} km<br><b>Yer:</b> {row.get('Yer', 'N/A')}"
         ).add_to(m)
 
     # Ortak depremler (yeşil)
