@@ -7,6 +7,7 @@ from obspy import UTCDateTime
 import io
 import folium
 from streamlit_folium import st_folium
+import tempfile
 
 st.set_page_config(page_title="Deprem Dalgaları", page_icon="🌌", layout="wide")
 st.title("KOERI'den Dalga Formu Verisi 🌌")
@@ -76,6 +77,14 @@ if st.sidebar.button("Veriyi Getir"):
         buf = io.BytesIO()
         fig.savefig(buf, format="png")
         st.image(buf)
+
+        # Sinyali geçici dosyaya kaydet (.mseed)
+        tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mseed")
+        st_wave.write(tmp_file.name, format="MSEED")
+
+        # Diğer sayfalarla paylaşmak için session_state'e ekle
+        st.session_state["waveform_file"] = tmp_file.name
+        st.info(f"Veri geçici olarak kaydedildi ve diğer sayfalarda kullanılabilir.")
 
     except Exception as e:
         st.error(f"Veri alınırken bir hata oluştu: {e}")
